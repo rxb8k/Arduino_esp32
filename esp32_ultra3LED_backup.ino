@@ -3,7 +3,7 @@
 // 초음파 센서 핀 설정, vcc (+) gnd (-)
 const int distTrigPin = 35; // tirg: 초음파 쏨
 const int distEchoPin = 34; // echo: 초음파 받음
- 
+
 // 3색 LED 핀 설정
 const int red_1 = 16; // 주황색
 const int green_1 = 14; // 노란색
@@ -70,7 +70,7 @@ void loop(){
   digitalWrite(distTrigPin, HIGH); //초음파 발사 
   delayMicroseconds(10); //10ms = 0.00001sec / 1sec = 1000 ms, 1ms = 1000 microSec
   digitalWrite(distTrigPin, LOW); //잠깐 쉬고 바로 꺼줌
- 
+
   // pulseIn: Pulse의 HIGH 구간 시간 측정 -> echo 핀으로 초음파가 돌아온 시간
   // 최대 1초까지 대기, 대기 중 HIGH가 안된다면 0으로 반환
   long duration = pulseIn(distEchoPin, HIGH); 
