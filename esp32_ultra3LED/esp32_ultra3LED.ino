@@ -10,6 +10,8 @@ const int distEchoPin = 34; // echo: 초음파 받음
 #define NUM_LEDS 8
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
 
+unsigned int colorCode=0; // R=1 G=2 B=3
+unsigned int preColor=3; // 초기값 Blue
 String led_state = "";
 String textColor = "";
 
@@ -21,10 +23,51 @@ WiFiServer server(80); // 웹 서버 포트 설정
             
 String htmlHeader="<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head>";
 
-
 unsigned long currentTime = millis(); // Current time
 unsigned long previousTime = 0; // Previous time
-const long timeoutTime = 2000; // Define timeout time in ms (example: 2000ms = 2s)
+const long delayTime = 2000; // Define timeout time in ms (example: 2000ms = 2s)
+
+void setColor(unsigned int colorCode){
+  if(colorCode==1){ // Red
+    strip.setPixelColor(0, 255, 0, 0);
+    strip.setPixelColor(1, 255, 0, 0);
+    strip.setPixelColor(2, 255, 0, 0);
+    strip.setPixelColor(3, 255, 0, 0);
+    strip.setPixelColor(4, 255, 0, 0);
+    strip.setPixelColor(5, 255, 0, 0);
+    strip.setPixelColor(6, 255, 0, 0);
+    strip.setPixelColor(7, 255, 0, 0);
+    led_state="많음";
+    textColor="red";
+    Serial.println("LED color : Red");
+  }
+  else if(colorCode==2){ // Green
+    strip.setPixelColor(0, 0, 255, 0);
+    strip.setPixelColor(1, 0, 255, 0);
+    strip.setPixelColor(2, 0, 255, 0);
+    strip.setPixelColor(3, 0, 255, 0);
+    strip.setPixelColor(4, 0, 255, 0);
+    strip.setPixelColor(5, 0, 255, 0);
+    strip.setPixelColor(6, 0, 255, 0);
+    strip.setPixelColor(7, 0, 255, 0);
+    led_state="보통";
+    textColor="green";
+    Serial.println("LED color : Green");
+  }
+  else if(colorCode==3) { // Blue
+    strip.setPixelColor(0, 0, 0, 255);
+    strip.setPixelColor(1, 0, 0, 255);
+    strip.setPixelColor(2, 0, 0, 255);
+    strip.setPixelColor(3, 0, 0, 255);
+    strip.setPixelColor(4, 0, 0, 255);
+    strip.setPixelColor(5, 0, 0, 255);
+    strip.setPixelColor(6, 0, 0, 255);
+    strip.setPixelColor(7, 0, 0, 255);
+    led_state="적음";
+    textColor="blue";
+    Serial.println("LED color : Blue");
+  }
+}
 
 void setup() {
   pinMode(distTrigPin, OUTPUT);
@@ -54,74 +97,37 @@ void loop(){
   digitalWrite(distTrigPin, HIGH); //초음파 발사 
   delayMicroseconds(10); //10ms = 0.00001sec / 1sec = 1000 ms, 1ms = 1000 microSec
   digitalWrite(distTrigPin, LOW); //잠깐 쉬고 바로 꺼줌
- 
+  
   // pulseIn: Pulse의 HIGH 구간 시간 측정 -> echo 핀으로 초음파가 돌아온 시간
   // 최대 1초까지 대기, 대기 중 HIGH가 안된다면 0으로 반환
-  long duration = pulseIn(distEchoPin, HIGH); 
-  Serial.println(duration);
-  
+  long duration = pulseIn(distEchoPin, HIGH);
   if(duration == 0) { return; } // 초음파 센서 동작 안 하면 loop 종료
 
-  float distance = duration / 58.2;
-  float distSum=0;
-  float distAvg=0;
+  float distance = duration/58.2;
+  Serial.println(distance);
   
-  if(distance>5) { // validity check
-    for(int i=0;i<500;i++){      
-        distSum+=distance;
-        delay(100);
-      }
-  } else { return; }
-  distAvg=distSum/500;
-  Serial.println("distAge: ");
-  Serial.println(distAvg);
-
-  int trash_percent = (80-distAvg)/60*100;
+  int trash_percent = (80-distance)/60*100;
   if(trash_percent<0) trash_percent=0;
 
+
   // Part B. 거리 측정값에 따른 LED 색 설정
-  if(distAvg<30) { // Red
-    strip.setPixelColor(0, 255, 0, 0);
-    strip.setPixelColor(1, 255, 0, 0);
-    strip.setPixelColor(2, 255, 0, 0);
-    strip.setPixelColor(3, 255, 0, 0);
-    strip.setPixelColor(4, 255, 0, 0);
-    strip.setPixelColor(5, 255, 0, 0);
-    strip.setPixelColor(6, 255, 0, 0);
-    strip.setPixelColor(7, 255, 0, 0);
-    led_state="많음";
-    textColor="red";
-    Serial.println("LED color : Red");
-  }
-  else if(distAvg<60) { // Green
-    strip.setPixelColor(0, 0, 255, 0);
-    strip.setPixelColor(1, 0, 255, 0);
-    strip.setPixelColor(2, 0, 255, 0);
-    strip.setPixelColor(3, 0, 255, 0);
-    strip.setPixelColor(4, 0, 255, 0);
-    strip.setPixelColor(5, 0, 255, 0);
-    strip.setPixelColor(6, 0, 255, 0);
-    strip.setPixelColor(7, 0, 255, 0);
-    led_state="보통";
-    textColor="green";
-    Serial.println("LED color : Green");
-  }
-  else{ // Blue
-    strip.setPixelColor(0, 0, 0, 255);
-    strip.setPixelColor(1, 0, 0, 255);
-    strip.setPixelColor(2, 0, 0, 255);
-    strip.setPixelColor(3, 0, 0, 255);
-    strip.setPixelColor(4, 0, 0, 255);
-    strip.setPixelColor(5, 0, 0, 255);
-    strip.setPixelColor(6, 0, 0, 255);
-    strip.setPixelColor(7, 0, 0, 255);
-    led_state="적음";
-    textColor="blue";
-    Serial.println("LED color : Blue");
-  }
+  if(distance>5){ // validity check
+    if(distance<30) { // Red
+      setColor(1);
+      preColor=1;
+    }
+    else if(distance<60) { // Green
+      setColor(2);
+      preColor=2;
+    }
+    else{ // Blue
+      setColor(3);
+      preColor=3;
+    }
+  } else { setColor(preColor);}
   strip.show();
-  distAvg=0; distSum=0;
-  
+
+
   // Part C. 웹 서버 구동
   WiFiClient client = server.available();   // 클라이언트 수신 대기
   Serial.println(WiFi.localIP()); 
@@ -131,7 +137,7 @@ void loop(){
     Serial.println("New Client.");
     String currentLine = "";  // make a String to hold incoming data from the client
     
-    while (client.connected() && currentTime - previousTime <= timeoutTime) {
+    while (client.connected() && currentTime - previousTime <= delayTime) {
       currentTime = millis();
       if (client.available()) {   
             client.println("HTTP/1.1 200 OK");
@@ -168,5 +174,5 @@ void loop(){
     Serial.println("Client disconnected.");
     Serial.println("");
     
-  delay(500);
+  delay(1000);
 }
