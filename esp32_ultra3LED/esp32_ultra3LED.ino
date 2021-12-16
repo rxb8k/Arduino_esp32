@@ -21,12 +21,10 @@ WiFiServer server(80); // 웹 서버 포트 설정
             
 String htmlHeader="<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"icon\" href=\"data:,\"></head>";
 
-// Current time
-unsigned long currentTime = millis();
-// Previous time
-unsigned long previousTime = 0; 
-// Define timeout time in ms (example: 2000ms = 2s)
-const long timeoutTime = 2000;
+
+unsigned long currentTime = millis(); // Current time
+unsigned long previousTime = 0; // Previous time
+const long timeoutTime = 2000; // Define timeout time in ms (example: 2000ms = 2s)
 
 void setup() {
   pinMode(distTrigPin, OUTPUT);
@@ -66,11 +64,11 @@ void loop(){
       return;
   }
 
-  int distance = duration / 58.2;  // 29.1를 나누면 cm단위, 왕복이기 때문에 58.2
-
+  float distance = duration / 58.2;
+  Serial.println(distance);
+  
   int trash_percent = (80-distance)/60*100;
   if(trash_percent<0) trash_percent=0;
-  Serial.println(distance);
 
   // Part B. 거리 측정값에 따른 LED 색 설정
   if(distance>0 && distance<30) { // Red
