@@ -60,18 +60,28 @@ void loop(){
   long duration = pulseIn(distEchoPin, HIGH); 
   Serial.println(duration);
   
-  if(duration == 0) { // 초음파 센서 동작 안 하면 loop 종료
-      return;
-  }
+  if(duration == 0) { return; } // 초음파 센서 동작 안 하면 loop 종료
 
   float distance = duration / 58.2;
-  Serial.println(distance);
+  float distSum=0;
+  float distAvg=0;
   
+  if(distance>5) { // validity check
+    for(int i=0;i<500;i++){      
+        distSum+=distance;
+        delay(100);
+      }
+  } else { return; }
+  distAvg=distSum/500;
+  Serial.println("distAge: ");
+  Serial.println(distAvg);
+  distSum=0; distAvg=0;
+
   int trash_percent = (80-distance)/60*100;
   if(trash_percent<0) trash_percent=0;
 
   // Part B. 거리 측정값에 따른 LED 색 설정
-  if(distance>0 && distance<30) { // Red
+  if(distAvg>0 && distAvg<30) { // Red
     strip.setPixelColor(0, 255, 0, 0);
     strip.setPixelColor(1, 255, 0, 0);
     strip.setPixelColor(2, 255, 0, 0);
@@ -83,7 +93,7 @@ void loop(){
     led_state="많음";
     textColor="red";
   }
-  else if(distance < 60) { // Green
+  else if(distAvg < 60) { // Green
     strip.setPixelColor(0, 0, 255, 0);
     strip.setPixelColor(1, 0, 255, 0);
     strip.setPixelColor(2, 0, 255, 0);
