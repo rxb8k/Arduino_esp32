@@ -4,6 +4,7 @@
 // 초음파 센서 핀 설정, VCC (+) GND (-)
 const int distTrigPin = 35; // tirg: 초음파 쏨
 const int distEchoPin = 34; // echo: 초음파 받음
+// float duration=0;
 
 // LED 핀 설정
 #define PIN 14
@@ -97,13 +98,23 @@ void loop(){
   digitalWrite(distTrigPin, HIGH); //초음파 발사 
   delayMicroseconds(10); //10ms = 0.00001sec / 1sec = 1000 ms, 1ms = 1000 microSec
   digitalWrite(distTrigPin, LOW); //잠깐 쉬고 바로 꺼줌
-  
+  long duration = pulseIn(distEchoPin, HIGH);
+  if(duration == 0) { //loop문 종료조건
+    return;
+  }
   // pulseIn: Pulse의 HIGH 구간 시간 측정 -> echo 핀으로 초음파가 돌아온 시간
   // 최대 1초까지 대기, 대기 중 HIGH가 안된다면 0으로 반환
-  long duration = pulseIn(distEchoPin, HIGH);
-  if(duration == 0) { return; } // 초음파 센서 동작 안 하면 loop 종료
+//  if(digitalRead(distEchoPin)==LOW){
+//    duration = pulseIn(distEchoPin, HIGH);
+//  } else{
+//    pinMode(distEchoPin, OUTPUT);
+//    digitalWrite(distEchoPin, LOW);
+//    pinMode(distEchoPin, INPUT);
+//  }
+  //if(duration == 0) { return; } // 초음파 센서 동작 안 하면 loop 종료
 
-  float distance = duration/58.2;
+  int distance = duration / 58.2;
+  // float distance = duration/58.2;
   Serial.println(distance);
   
   int trash_percent = (80-distance)/60*100;
@@ -126,7 +137,7 @@ void loop(){
     }
   } else { setColor(preColor);}
   strip.show();
-
+/*
 
   // Part C. 웹 서버 구동
   WiFiClient client = server.available();   // 클라이언트 수신 대기
@@ -172,7 +183,7 @@ void loop(){
     header = ""; // Clear the header variable
     client.stop();    // Close the connection
     Serial.println("Client disconnected.");
-    Serial.println("");
+    Serial.println("");*/
     
-  delay(1000);
+  delay(100);
 }
