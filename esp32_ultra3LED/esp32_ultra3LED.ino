@@ -75,13 +75,12 @@ void loop(){
   distAvg=distSum/500;
   Serial.println("distAge: ");
   Serial.println(distAvg);
-  distSum=0; distAvg=0;
 
-  int trash_percent = (80-distance)/60*100;
+  int trash_percent = (80-distAvg)/60*100;
   if(trash_percent<0) trash_percent=0;
 
   // Part B. 거리 측정값에 따른 LED 색 설정
-  if(distAvg>0 && distAvg<30) { // Red
+  if(distAvg<30) { // Red
     strip.setPixelColor(0, 255, 0, 0);
     strip.setPixelColor(1, 255, 0, 0);
     strip.setPixelColor(2, 255, 0, 0);
@@ -92,8 +91,9 @@ void loop(){
     strip.setPixelColor(7, 255, 0, 0);
     led_state="많음";
     textColor="red";
+    Serial.println("LED color : Red");
   }
-  else if(distAvg < 60) { // Green
+  else if(distAvg<60) { // Green
     strip.setPixelColor(0, 0, 255, 0);
     strip.setPixelColor(1, 0, 255, 0);
     strip.setPixelColor(2, 0, 255, 0);
@@ -104,6 +104,7 @@ void loop(){
     strip.setPixelColor(7, 0, 255, 0);
     led_state="보통";
     textColor="green";
+    Serial.println("LED color : Green");
   }
   else{ // Blue
     strip.setPixelColor(0, 0, 0, 255);
@@ -116,8 +117,10 @@ void loop(){
     strip.setPixelColor(7, 0, 0, 255);
     led_state="적음";
     textColor="blue";
+    Serial.println("LED color : Blue");
   }
   strip.show();
+  distAvg=0; distSum=0;
   
   // Part C. 웹 서버 구동
   WiFiClient client = server.available();   // 클라이언트 수신 대기
