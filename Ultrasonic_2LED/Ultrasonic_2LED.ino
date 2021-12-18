@@ -1,3 +1,5 @@
+#include "Arduino.h"
+
 //초음파센서 trig, echo핀 설정 trig는 trigger이고 echo는 말그대로 되돌아옴
 int distTrigPin = 4; //왜 앞에 const를 다는가 변수 이름은 distTrigpin이라고 설정한거고 그 핀 번호를 4번으로 하겠다라는 의미인가?
 int distEchoPin = 3;
@@ -13,6 +15,7 @@ int ledBluePin = 13;
 void setup() {
   pinMode(distTrigPin, OUTPUT);
   pinMode(distEchoPin, INPUT);
+  Serial.begin(115200);
 }
  
 void loop() {
@@ -39,6 +42,10 @@ void loop() {
  
   // 29.1를 나누면 cm단위, 왕복이기 때문에 58.2
   int distance = duration / 58.2;
+  Serial.println("duration: ");
+  Serial.println(duration);
+  Serial.println("distance: ");
+  Serial.println(distance);
  
   if(distance < 30) {
     analogWrite(ledRedPin, 255);
