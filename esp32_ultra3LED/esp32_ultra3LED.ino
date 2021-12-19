@@ -121,8 +121,11 @@ void loop(){
   } else { setColor(preColor);}
   strip.show();
   
-  float trash_percent = (100-distance)/70*100;
+  int trash_percent = int((100-distance)/70*100);
   if(trash_percent<0) trash_percent=0;
+  
+    
+  delay(600);
 
 
   // Part C. 웹 서버 구동
@@ -170,6 +173,4 @@ void loop(){
     client.stop();    // Close the connection
     Serial.println("Client disconnected.");
     Serial.println("");
-    
-  delay(500);
 }
