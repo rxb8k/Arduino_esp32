@@ -9,7 +9,7 @@ const int distEchoPin = 34; // echo: 초음파 받음
 #define PIN 14
 #define NUM_LEDS 8
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
-
+ 
 unsigned int colorCode=0; // R=1 G=2 B=3
 unsigned int preColor=3; // 초기값 Blue
 String led_state = "";
@@ -97,10 +97,10 @@ void loop(){
   digitalWrite(distTrigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(distTrigPin, LOW);
-  long duration = pulseIn(distEchoPin, HIGH);
+  float duration = pulseIn(distEchoPin, HIGH);
   if(duration == 0) { return; } // loop문 종료 조건
 
-  int distance = duration / 58.2;
+  float distance = duration / 58.2;
   Serial.println(distance);
 
  
@@ -121,7 +121,7 @@ void loop(){
   } else { setColor(preColor);}
   strip.show();
   
-  int trash_percent = (100-distance)/70*100;
+  float trash_percent = (100-distance)/70*100;
   if(trash_percent<0) trash_percent=0;
 
 
