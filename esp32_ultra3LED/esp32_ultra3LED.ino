@@ -125,7 +125,7 @@ void loop(){
   if(trash_percent<0) trash_percent=0;
   
     
-  delay(600);
+  //delay(600);
 
 
   // Part C. 웹 서버 구동
