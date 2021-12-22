@@ -78,5 +78,4 @@ void loop() {
   } else { setColor(preColor);}
   strip.show();
   
-  delay(1000);
 }
